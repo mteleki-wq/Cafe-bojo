@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maison Escapade — Modern Australian Dining</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Sora:wght@300;400;600;700&family=Space+Mono:wght@400;700&display=swap');
+
+  :root{
+    --bg:#08060f;
+    --panel:#12102a;
+    --panel-2:#171432;
+    --ink:#eef1fb;
+    --muted:#9aa3c7;
+    --line:rgba(154,163,199,.16);
+    --violet:#a855f7;
+    --blue:#4f7cff;
+    --teal:#39d0c3;
+    --grad:linear-gradient(100deg,#a855f7 0%,#4f7cff 55%,#39d0c3 100%);
+    --glow1:rgba(168,85,247,.22);
+    --glow2:rgba(57,208,195,.16);
+    --edge:rgba(168,85,247,.35);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);color:var(--ink);
+    font-family:'Sora',-apple-system,sans-serif;font-weight:400;
+    -webkit-font-smoothing:antialiased;line-height:1.7;font-size:16px;overflow-x:hidden;
+  }
+  img{display:block;width:100%;height:100%;object-fit:cover}
+  a{color:inherit}
+  .wrap{max-width:1140px;margin:0 auto;padding:0 28px}
+
+  .kicker{
+    display:inline-flex;align-items:center;gap:12px;
+    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.3em;text-transform:uppercase;
+    color:var(--teal);
+  }
+  .kicker::before{content:"";width:30px;height:1px;background:var(--grad)}
+
+  /* ---------- nav ---------- */
+  nav{position:fixed;top:0;left:0;right:0;z-index:50;background:linear-gradient(180deg,rgba(8,6,15,.9),rgba(8,6,15,0));backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+  .nav-in{display:flex;align-items:center;justify-content:space-between;padding:22px 28px;max-width:1260px;margin:0 auto}
+  .logo{font-family:'Unbounded',sans-serif;font-weight:700;font-size:15px;letter-spacing:.02em;text-decoration:none}
+  .logo em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .nav-links{display:flex;gap:26px;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase}
+  .nav-links a{text-decoration:none;color:var(--muted);transition:color .2s}
+  .nav-links a:hover{color:var(--ink)}
+  @media(max-width:680px){.nav-links{gap:14px;font-size:10px}}
+
+  /* ---------- hero: video + 3D depth ---------- */
+  .hero{position:relative;min-height:96vh;display:flex;align-items:center;overflow:hidden;perspective:900px}
+  .hero-media{position:absolute;inset:0;z-index:1}
+  #heroVideo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none}
+  #heroVideo.live{display:block}
+  .hero-poster{position:absolute;inset:0}
+  .hero-poster.hidden{display:none}
+  .hero::after{
+    content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+    background:
+      radial-gradient(circle at 22% 30%,var(--glow1),transparent 44%),
+      radial-gradient(circle at 80% 70%,var(--glow2),transparent 42%),
+      linear-gradient(180deg,rgba(8,6,15,.42) 0%,rgba(8,6,15,.3) 50%,var(--bg) 94%);
+  }
+  .hero-stage{
+    position:relative;z-index:3;width:100%;max-width:1140px;margin:0 auto;padding:120px 28px 90px;
+    transform-style:preserve-3d;transition:transform .18s ease-out,opacity .18s ease-out;
+    will-change:transform,opacity;
+  }
+  .hero-media{will-change:transform}
+  .hero-orb{
+    width:120px;height:120px;border-radius:50%;position:relative;margin-bottom:34px;
+    background:conic-gradient(from 0deg,#a855f7,#4f7cff,#39d0c3,#a855f7);
+    animation:spin 10s linear infinite;
+  }
+  .hero-orb::after{content:"";position:absolute;inset:8px;border-radius:50%;background:var(--bg);z-index:1}
+  .hero-orb .orb-initials{
+    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:2;
+    font-family:'Unbounded',sans-serif;font-weight:900;font-size:30px;
+    animation:spin 10s linear infinite reverse;
+  }
+  /* uploaded logo image — tucked inside the ring, counter-spun to stay upright */
+  .hero-orb .orb-logo{
+    display:none;position:absolute;inset:8px;z-index:2;width:calc(100% - 16px);height:calc(100% - 16px);
+    object-fit:cover;border-radius:50%;animation:spin 10s linear infinite reverse;
+  }
+  .hero-orb.has-logo .orb-initials{display:none}
+  .hero-orb.has-logo .orb-logo{display:block}
+  /* circle off — bare mark, no ring frame */
+  .hero-orb.no-ring{background:none;animation:none;width:auto;height:auto}
+  .hero-orb.no-ring::after{display:none}
+  .hero-orb.no-ring .orb-initials{
+    position:static;inset:auto;animation:none;font-size:46px;line-height:1;
+    background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .hero-orb.no-ring .orb-logo{
+    position:static;inset:auto;width:auto;height:118px;max-width:300px;
+    object-fit:contain;border-radius:0;animation:none;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+  h1{
+    font-family:'Unbounded',sans-serif;font-weight:900;
+    font-size:clamp(38px,7.4vw,86px);line-height:1.04;letter-spacing:-.01em;
+    transform:translateZ(46px);
+  }
+  h1 .g{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero-role{
+    margin-top:18px;font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.34em;text-transform:uppercase;
+    color:var(--muted);transform:translateZ(30px);
+  }
+  .lede{font-size:17px;color:var(--muted);max-width:50ch;margin-top:24px;font-weight:300;transform:translateZ(20px)}
+  .hero-cta{
+    display:inline-block;margin-top:36px;text-decoration:none;color:#fff;
+    font-weight:700;font-size:13px;letter-spacing:.14em;text-transform:uppercase;
+    padding:18px 38px;border-radius:100px;background:var(--grad);
+    transition:transform .25s ease,box-shadow .25s ease;transform:translateZ(34px);
+  }
+  .hero-cta:hover{box-shadow:0 16px 46px rgba(79,124,255,.4)}
+
+  /* ---------- highlights band ---------- */
+  .band{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--panel);padding:44px 0}
+  .band-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;max-width:1140px;margin:0 auto;padding:0 28px}
+  @media(max-width:760px){.band-grid{grid-template-columns:repeat(2,1fr);gap:30px 20px}}
+  .band-item{text-align:center}
+  .band-item b{
+    display:block;font-family:'Unbounded',sans-serif;font-weight:700;font-size:30px;
+    background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .band-item span{font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+
+  /* ---------- sections ---------- */
+  section{padding:104px 0}
+  h2{
+    font-family:'Unbounded',sans-serif;font-weight:700;
+    font-size:clamp(26px,4.2vw,44px);line-height:1.1;margin-top:20px;
+  }
+  h2 .g{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+  /* ---------- about with tilt photo ---------- */
+  .about-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:64px;align-items:center;margin-top:16px}
+  @media(max-width:860px){.about-grid{grid-template-columns:1fr;gap:44px}}
+  .tilt{transform-style:preserve-3d;transition:transform .3s ease;will-change:transform}
+  .about-photo{aspect-ratio:4/5;overflow:hidden;position:relative;border-radius:16px;background:var(--panel);
+    box-shadow:0 30px 80px rgba(0,0,0,.5)}
+  .about-photo::after{content:"";position:absolute;inset:0;border-radius:16px;border:1px solid var(--edge);pointer-events:none}
+  .about-copy p{color:var(--muted);margin-bottom:20px;font-weight:300;font-size:16.5px}
+  .about-copy p:first-of-type{color:var(--ink);font-size:19px;font-weight:400}
+
+  /* ---------- gallery: three modes + portal viewer ---------- */
+  .gal-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap}
+  .mode-switch{display:flex;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:100px;padding:5px}
+  .mode-btn{
+    border:none;background:transparent;color:var(--muted);cursor:pointer;
+    font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;
+    padding:10px 18px;border-radius:100px;-webkit-tap-highlight-color:transparent;transition:all .25s;
+  }
+  .mode-btn.on{background:var(--grad);color:#fff}
+
+  .gal{margin-top:44px}
+  .gal-item{position:relative;overflow:hidden;border-radius:14px;background:var(--panel);cursor:pointer}
+  .gal-item img{transition:transform .5s ease}
+  .gal-item:hover img{transform:scale(1.06)}
+  .gal-cap{
+    position:absolute;left:0;right:0;bottom:0;z-index:3;padding:38px 16px 13px;
+    background:linear-gradient(180deg,transparent,rgba(8,6,15,.92));
+    font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+  }
+  /* grid mode */
+  .gal.mode-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .gal.mode-grid .gal-item{aspect-ratio:4/5}
+  @media(max-width:820px){.gal.mode-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:540px){.gal.mode-grid{grid-template-columns:1fr}}
+  /* strip mode */
+  .gal.mode-strip{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding-bottom:10px}
+  .gal.mode-strip .gal-item{flex:0 0 auto;width:min(320px,74vw);aspect-ratio:4/5;scroll-snap-align:center}
+  /* spotlight mode */
+  .gal.mode-spot{display:grid;grid-template-columns:2.2fr 1fr;gap:16px}
+  @media(max-width:760px){.gal.mode-spot{grid-template-columns:1fr}}
+  .gal.mode-spot .gal-item:first-child{grid-row:span 5;aspect-ratio:auto;min-height:420px}
+  .gal.mode-spot .gal-item:not(:first-child){aspect-ratio:16/9}
+  .gal.mode-spot .gal-item:not(:first-child) .gal-cap{display:none}
+
+  /* portal viewer */
+  #portal{
+    display:none;position:fixed;inset:0;z-index:120;background:rgba(4,3,9,.97);
+    align-items:center;justify-content:center;flex-direction:column;padding:24px;
+  }
+  #portal.open{display:flex;animation:portalIn .45s ease both}
+  @keyframes portalIn{
+    from{clip-path:circle(0% at var(--px,50%) var(--py,50%))}
+    to{clip-path:circle(140% at var(--px,50%) var(--py,50%))}
+  }
+  .pt-img-wrap{max-width:min(940px,92vw);max-height:74vh;position:relative}
+  .pt-img-wrap img{width:auto;height:auto;max-width:100%;max-height:74vh;border-radius:12px;object-fit:contain}
+  .pt-cap{margin-top:18px;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-align:center}
+  .pt-btn{
+    position:absolute;top:50%;transform:translateY(-50%);
+    background:rgba(18,16,42,.9);border:1px solid var(--line);color:var(--ink);
+    width:48px;height:48px;border-radius:50%;font-size:20px;cursor:pointer;line-height:1;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .pt-prev{left:-8px}.pt-next{right:-8px}
+  .pt-close{position:fixed;top:22px;right:22px;background:rgba(18,16,42,.9);border:1px solid var(--line);color:var(--ink);width:46px;height:46px;border-radius:50%;font-size:20px;cursor:pointer;line-height:1}
+  @media(max-width:640px){.pt-prev{left:2px}.pt-next{right:2px}}
+
+  /* ---------- statement band ---------- */
+  .statement{
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+    background:radial-gradient(circle at 50% 130%,rgba(79,124,255,.16),transparent 60%),var(--panel);
+    padding:92px 0;text-align:center;
+  }
+  .st-text{
+    font-family:'Unbounded',sans-serif;font-weight:700;
+    font-size:clamp(20px,3.4vw,34px);line-height:1.3;max-width:26ch;margin:0 auto;
+  }
+  .st-text .g{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .st-by{margin-top:24px;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--muted)}
+
+  /* ---------- testimonials ---------- */
+  .testi{display:grid;grid-template-columns:repeat(2,1fr);gap:22px;margin-top:46px}
+  @media(max-width:760px){.testi{grid-template-columns:1fr}}
+  .t-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:34px 32px;position:relative;overflow:hidden}
+  .t-card::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad)}
+  .t-quote{font-size:17px;line-height:1.7;font-weight:300}
+  .t-by{margin-top:20px;font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+
+  /* ---------- services (tilt cards) ---------- */
+  .svc{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:46px}
+  @media(max-width:820px){.svc{grid-template-columns:1fr}}
+  .svc-card{
+    background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:32px 30px;
+    transform-style:preserve-3d;transition:transform .3s ease,border-color .3s;will-change:transform;
+  }
+  .svc-card:hover{border-color:var(--edge)}
+  .svc-num{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.2em;color:var(--teal)}
+  .svc-card h3{font-family:'Unbounded',sans-serif;font-weight:700;font-size:18px;margin:14px 0 10px}
+  .svc-card p{font-size:14.5px;color:var(--muted);font-weight:300}
+
+  /* ---------- custom sections ---------- */
+  .custom-sec{padding:104px 0;border-top:1px solid var(--line)}
+  .custom-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;margin-top:16px}
+  @media(max-width:820px){.custom-grid{grid-template-columns:1fr;gap:38px}}
+  .custom-photo{aspect-ratio:16/10;overflow:hidden;position:relative;border-radius:16px;background:var(--panel)}
+  .custom-copy p{color:var(--muted);font-weight:300;font-size:16.5px}
+  .sec-remove{
+    display:none;margin-top:20px;background:rgba(220,38,60,.14);border:1px solid rgba(220,38,60,.4);
+    color:#ff8fa0;border-radius:100px;font-family:'Sora',sans-serif;font-weight:600;font-size:12px;
+    padding:9px 18px;cursor:pointer;
+  }
+  body.editing .sec-remove{display:inline-block}
+
+  /* ---------- contact ---------- */
+  .contact .big{
+    font-family:'Unbounded',sans-serif;font-weight:900;
+    font-size:clamp(28px,5.2vw,54px);line-height:1.1;max-width:20ch;margin-top:20px;
+  }
+  .contact .big .g{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .contact-row{display:flex;gap:16px;flex-wrap:wrap;margin-top:40px}
+  .c-btn{
+    text-decoration:none;font-weight:700;font-size:13px;letter-spacing:.14em;text-transform:uppercase;
+    padding:17px 34px;border-radius:100px;transition:all .25s;
+  }
+  .c-fill{background:var(--grad);color:#fff}
+  .c-fill:hover{box-shadow:0 14px 40px rgba(79,124,255,.4)}
+  .c-line{border:1px solid var(--line);color:var(--ink)}
+  .c-line:hover{border-color:var(--violet);color:var(--violet)}
+
+  footer{border-top:1px solid var(--line);padding:34px 0 46px;color:var(--muted);font-size:13px;font-weight:300}
+  footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+
+  .fade{opacity:0;transform:translateY(26px);transition:opacity .8s ease,transform .8s ease}
+  .fade.in{opacity:1;transform:none}
+  @media (prefers-reduced-motion:reduce){
+    .fade{opacity:1;transform:none;transition:none}
+    .hero-orb,.hero-orb .orb-initials,.hero-orb .orb-logo{animation:none}
+    #portal.open{animation:none}
+    .tilt,.svc-card,.hero-stage{transform:none !important}
+  }
+
+  /* ---------- menu ---------- */
+  .menu-cats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px 64px;margin-top:34px}
+  @media(max-width:820px){.menu-cats{grid-template-columns:1fr}}
+  .menu-cat{margin-top:26px}
+  .menu-cat-title{
+    font-family:'Unbounded',sans-serif;font-weight:700;font-size:17px;letter-spacing:.02em;
+    padding-bottom:12px;border-bottom:1px solid var(--line);
+    display:flex;align-items:center;gap:12px;
+  }
+  .menu-cat-title::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--grad);flex-shrink:0}
+  .dish{padding:18px 0;border-bottom:1px solid var(--line);position:relative}
+  .dish-head{display:flex;align-items:baseline;gap:12px}
+  .dish-name{font-weight:700;font-size:16.5px}
+  .dish-dots{flex:1;border-bottom:2px dotted var(--line);transform:translateY(-4px);min-width:24px}
+  .dish-price{
+    font-family:'Unbounded',sans-serif;font-weight:700;font-size:15px;white-space:nowrap;
+    background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .dish-desc{color:var(--muted);font-size:13.5px;margin-top:6px;max-width:58ch;font-weight:300}
+
+  /* ---------- visit grid ---------- */
+  .visit-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:34px}
+  @media(max-width:760px){.visit-grid{grid-template-columns:1fr}}
+  .visit-grid h4{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--teal);margin-bottom:8px}
+  .visit-grid p{color:var(--muted);font-size:14.5px;font-weight:300}
+
+  /* ---------- floating book button + booking modal ---------- */
+  #bookFab{
+    position:fixed;right:18px;bottom:18px;z-index:95;
+    background:var(--grad);color:#fff;border:none;cursor:pointer;
+    font-family:'Sora',sans-serif;font-weight:800;font-size:14.5px;letter-spacing:.04em;
+    padding:16px 28px;border-radius:100px;display:flex;align-items:center;gap:10px;
+    box-shadow:0 14px 38px rgba(79,124,255,.35);transition:transform .25s,box-shadow .25s;
+    -webkit-tap-highlight-color:transparent;
+  }
+  #bookFab:hover{transform:translateY(-2px);box-shadow:0 18px 46px rgba(168,85,247,.45)}
+  #bookFab .dot{width:8px;height:8px;border-radius:50%;background:#fff;box-shadow:0 0 8px #fff}
+  body.editing #bookFab{bottom:88px}
+  #bookModal{
+    display:none;position:fixed;inset:0;z-index:110;background:rgba(4,3,9,.7);
+    align-items:center;justify-content:center;padding:18px;
+  }
+  #bookModal.open{display:flex}
+  .bm-card{
+    background:var(--bg);border:1px solid var(--line);border-radius:18px;width:100%;max-width:720px;
+    height:min(88vh,860px);position:relative;overflow:hidden;display:flex;flex-direction:column;
+    box-shadow:0 30px 90px rgba(0,0,0,.6);
+  }
+  .bm-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line);background:var(--panel)}
+  .bm-head span{font-family:'Unbounded',sans-serif;font-weight:700;font-size:14px}
+  .bm-close{background:transparent;border:1px solid var(--line);border-radius:50%;width:36px;height:36px;font-size:17px;cursor:pointer;line-height:1;color:var(--ink)}
+  .bm-card iframe{flex:1;width:100%;border:none;background:#faf7f0}
+  @media(max-width:560px){#bookModal{padding:0}.bm-card{border-radius:0;height:100%;max-width:none}}
+
+  /* ---------- live availability strip ---------- */
+  #liveStrip{
+    display:none;align-items:center;gap:16px;flex-wrap:wrap;justify-content:center;
+    padding:14px 20px;border-bottom:1px solid var(--line);
+    background:linear-gradient(180deg,var(--panel),transparent);
+  }
+  #liveStrip.show{display:flex;animation:lsIn .6s ease both}
+  @keyframes lsIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+  .ls-label{font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.28em;text-transform:uppercase;color:var(--teal)}
+  .ls-chips{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+  .ls-chip{
+    display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:100px;
+    padding:8px 16px;font-size:12.5px;font-weight:600;
+  }
+  .ls-chip i{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+  .ls-chip.good i{background:var(--teal);box-shadow:0 0 8px var(--teal)}
+  .ls-chip.low{border-color:rgba(251,146,60,.5)}
+  .ls-chip.low i{background:#fb923c;box-shadow:0 0 8px #fb923c;animation:lsPulse 1.6s ease infinite}
+  .ls-chip.full{color:var(--muted)}
+  .ls-chip.full i{background:var(--muted)}
+  @keyframes lsPulse{50%{opacity:.4}}
+  .ls-chip b{font-family:'Unbounded',sans-serif;font-weight:700;font-size:12px}
+
+  /* ---------- tappable dishes ---------- */
+  .dish.has-photo{cursor:pointer}
+  .dish.has-photo .dish-name::after{
+    content:"◉";margin-left:8px;font-size:10px;vertical-align:2px;
+    background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .dish.has-photo:hover .dish-name{text-decoration:underline;text-decoration-color:var(--teal);text-underline-offset:4px}
+
+  </style>
+</head>
+<body data-booking-url="restaurant-booking-supabase.html" class="">
+
+<nav>
+  <div class="nav-in">
+    <a class="logo" href="#top">Maison <em>Escapade</em></a>
+    <div class="nav-links">
+      <a href="#about">Story</a><a href="#menu">Menu</a><a href="#work">Gallery</a><a href="#contact">Visit</a>
+      <a href="#" data-book="" style="color:var(--teal)">Book</a>
+    </div>
+  </div>
+</nav>
+
+
+
+<header class="hero" id="top">
+  <div class="hero-media">
+    <video id="heroVideo" autoplay="" muted="" loop="" playsinline=""></video>
+    <div class="hero-poster" id="heroPoster">
+      <img alt="Hero" src="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 800'%3E%3Cdefs%3E%3CradialGradient id='g1' cx='30%25' cy='40%25' r='70%25'%3E%3Cstop offset='0%25' stop-color='%231d1440'/%3E%3Cstop offset='100%25' stop-color='%2308060f'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width='1200' height='800' fill='url(%23g1)'/%3E%3Ctext x='600' y='412' text-anchor='middle' font-family='monospace' font-size='24' letter-spacing='6' fill='%239aa3c7'%3EYOUR HERO PHOTO OR VIDEO%3C/text%3E%3C/svg%3E">
+    </div>
+  </div>
+  <div class="hero-stage" id="heroStage" style="">
+    <div class="hero-orb" id="heroOrb"><span class="orb-initials">ME</span><img class="orb-logo" alt="Logo"></div>
+    <span class="kicker">Modern Australian · Sydney</span>
+    <h1 style="margin-top:22px"><span>Maison Escapade.</span><br><span class="g">Nights worth remembering.</span></h1>
+    <div class="hero-role">Two sittings nightly — 6:00 PM &amp; 8:00 PM</div>
+    <p class="lede">Seasonal menus built around the best of the markets, served in a warm room by people who love this. Join us for a night that stays with you.</p>
+    <a class="hero-cta" href="#" data-book="">Book a table</a>
+  </div>
+</header>
+
+<!-- live availability strip: fills itself from the booking database.
+     Hidden automatically until "Set live seats" is configured in edit mode. -->
+<div id="liveStrip" aria-live="polite">
+  <span class="ls-label">Tonight</span>
+  <div class="ls-chips" id="lsChips"></div>
+</div>
+
+<div class="band">
+  <div class="band-grid">
+    <div class="band-item fade"><b>15+</b><span>Years in kitchens</span></div>
+    <div class="band-item fade"><b>2</b><span>Hatted venues led</span></div>
+    <div class="band-item fade"><b>40+</b><span>Menus designed</span></div>
+    <div class="band-item fade"><b>1,000s</b><span>Of guests delighted</span></div>
+  </div>
+</div>
+
+<section class="wrap" id="about">
+  <span class="kicker fade">About</span>
+  <h2 class="fade">A neighbourhood table with <span class="g">serious intent.</span></h2>
+  <div class="about-grid">
+    <div class="tilt fade" data-tilt="">
+      <div class="about-photo">
+        <img alt="Portrait" src="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 500'%3E%3Crect width='400' height='500' fill='%2312102a'/%3E%3Ccircle cx='200' cy='185' r='66' fill='%23221e45'/%3E%3Cpath d='M86 430c14-86 64-128 114-128s100 42 114 128z' fill='%23221e45'/%3E%3Ctext x='200' y='470' text-anchor='middle' font-family='monospace' font-size='16' letter-spacing='3' fill='%239aa3c7'%3EYOUR PHOTO%3C/text%3E%3C/svg%3E">
+      </div>
+    </div>
+    <div class="about-copy fade">
+      <p>Maison Escapade began with a simple idea: cook what the season gives you, treat it with respect, and make everyone at the table feel looked after.</p>
+      <p>Our menus change with the markets. Our sittings are unhurried. The wine list leans local, the sourdough is baked at dawn, and the kitchen runs on curiosity as much as discipline.</p>
+      <p>Whether you're two at the bar or twelve for a birthday, the welcome is the same. Fifteen years on, that's still the whole recipe.</p>
+    </div>
+  </div>
+</section>
+
+<section class="wrap" id="menu">
+  <span class="kicker fade">The menu</span>
+  <h2 class="fade">Cooked today, <span class="g">gone tomorrow.</span></h2>
+  <p class="fade" style="color:var(--muted);font-size:14px;margin-top:12px;max-width:56ch">A taste of the current menu — it moves with the seasons, so treat this as a love letter, not a contract.</p>
+
+  <div class="menu-cats fade">
+
+    <div class="menu-cat">
+      <h3 class="menu-cat-title">To start</h3>
+      <div class="dishes">
+        <div class="dish">
+          <div class="dish-head"><span class="dish-name">Sydney rock oysters</span><span class="dish-dots"></span><span class="dish-price">$6 ea</span></div>
+          <p class="dish-desc">Freshly shucked, finger lime, chardonnay mignonette.</p>
+          
+        </div>
+        <div class="dish">
+          <div class="dish-head"><span class="dish-name">Burrata &amp; blood orange</span><span class="dish-dots"></span><span class="dish-price">$24</span></div>
+          <p class="dish-desc">Creamy burrata, charred blood orange, basil oil, warm sourdough.</p>
+          
+        </div>
+        <div class="dish">
+          <div class="dish-head"><span class="dish-name">Wagyu tartare</span><span class="dish-dots"></span><span class="dish-price">$28</span></div>
+          <p class="dish-desc">Hand-cut wagyu, smoked egg yolk, native pepperberry, potato crisps.</p>
+          
+        </div>
+      </div>
+      
+    </div>
+
+    <div class="menu-cat">
+      <h3 class="menu-cat-title">Mains</h3>
+      <div class="dishes">
+        <div class="dish">
+          <div class="dish-head"><span class="dish-name">Market fish</span><span class="dish-dots"></span><span class="dish-price">$42</span></div>
+          <p class="dish-desc">Today's catch, native citrus beurre blanc, seasonal greens.</p>
+          
+        </div>
+        <div class="dish">
+          <div class="dish-head"><span class="dish-name">Slow lamb shoulder</span><span class="dish-dots"></span><span class="dish-price">$46</span></div>
+          <p class="dish-desc">Twelve hours, smoked eggplant, pomegranate, mint — for two.</p>
+          
+        </div>
+        <div class="dish">
+          <div class="dish-head"><span class="dish-name">Mushroom &amp; miso risotto</span><span class="dish-dots"></span><span class="dish-price">$36</span></div>
+          <p class="dish-desc">Pine mushrooms, white miso, aged parmesan, chive oil.</p>
+          
+        </div>
+      </div>
+      
+    </div>
+
+    <div class="menu-cat">
+      <h3 class="menu-cat-title">Dessert</h3>
+      <div class="dishes">
+        <div class="dish">
+          <div class="dish-head"><span class="dish-name">Lemon meringue tart</span><span class="dish-dots"></span><span class="dish-price">$18</span></div>
+          <p class="dish-desc">Torched meringue, candied lemon, strawberries.</p>
+          
+        </div>
+        <div class="dish">
+          <div class="dish-head"><span class="dish-name">Apple rose tart</span><span class="dish-dots"></span><span class="dish-price">$19</span></div>
+          <p class="dish-desc">Poached apple petals, vanilla crème, berry gel, gold leaf.</p>
+          
+        </div>
+      </div>
+      
+    </div>
+
+    <div class="menu-cat">
+      <h3 class="menu-cat-title">To drink</h3>
+      <div class="dishes">
+        <div class="dish">
+          <div class="dish-head"><span class="dish-name">House negroni</span><span class="dish-dots"></span><span class="dish-price">$21</span></div>
+          <p class="dish-desc">Barrel-aged, blood orange twist.</p>
+          
+        </div>
+        <div class="dish">
+          <div class="dish-head"><span class="dish-name">Wines by the glass</span><span class="dish-dots"></span><span class="dish-price">$14–26</span></div>
+          <p class="dish-desc">A leaning-local list that changes as often as the menu.</p>
+          
+        </div>
+      </div>
+      
+    </div>
+
+  </div>
+  <div style="text-align:center;margin-top:18px">
+    
+  </div>
+</section>
+
+<section class="wrap" id="work">
+  <div class="gal-head">
+    <div>
+      <span class="kicker fade">From the kitchen</span>
+      <h2 class="fade">Choose your <span class="g">view.</span></h2>
+    </div>
+    <div class="mode-switch fade" data-engine-keep="">
+      <button class="mode-btn on" data-mode="grid">Grid</button>
+      <button class="mode-btn" data-mode="strip">Strip</button>
+      <button class="mode-btn" data-mode="spot">Spotlight</button>
+    </div>
+  </div>
+  <div class="gal mode-grid" id="gal">
+    <div class="gal-item" data-i="0"><img alt="Work 1" src="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 500'%3E%3Crect width='400' height='500' fill='%23171334'/%3E%3Ctext x='200' y='258' text-anchor='middle' font-family='monospace' font-size='17' letter-spacing='4' fill='%239aa3c7'%3EWORK 01%3C/text%3E%3C/svg%3E"><div class="gal-cap">Spring tasting — course three</div></div>
+    <div class="gal-item" data-i="1"><img alt="Work 2" src="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 500'%3E%3Crect width='400' height='500' fill='%231a1140'/%3E%3Ctext x='200' y='258' text-anchor='middle' font-family='monospace' font-size='17' letter-spacing='4' fill='%239aa3c7'%3EWORK 02%3C/text%3E%3C/svg%3E"><div class="gal-cap">Market fish, native citrus</div></div>
+    <div class="gal-item" data-i="2"><img alt="Work 3" src="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 500'%3E%3Crect width='400' height='500' fill='%23101838'/%3E%3Ctext x='200' y='258' text-anchor='middle' font-family='monospace' font-size='17' letter-spacing='4' fill='%239aa3c7'%3EWORK 03%3C/text%3E%3C/svg%3E"><div class="gal-cap">Private dining, harbour event</div></div>
+    <div class="gal-item" data-i="3"><img alt="Work 4" src="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 500'%3E%3Crect width='400' height='500' fill='%23131c33'/%3E%3Ctext x='200' y='258' text-anchor='middle' font-family='monospace' font-size='17' letter-spacing='4' fill='%239aa3c7'%3EWORK 04%3C/text%3E%3C/svg%3E"><div class="gal-cap">Chocolate, wattleseed, cherry</div></div>
+    <div class="gal-item" data-i="4"><img alt="Work 5" src="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 500'%3E%3Crect width='400' height='500' fill='%23181141'/%3E%3Ctext x='200' y='258' text-anchor='middle' font-family='monospace' font-size='17' letter-spacing='4' fill='%239aa3c7'%3EWORK 05%3C/text%3E%3C/svg%3E"><div class="gal-cap">The brigade, service night</div></div>
+    <div class="gal-item" data-i="5"><img alt="Work 6" src="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 500'%3E%3Crect width='400' height='500' fill='%23121a2e'/%3E%3Ctext x='200' y='258' text-anchor='middle' font-family='monospace' font-size='17' letter-spacing='4' fill='%239aa3c7'%3EWORK 06%3C/text%3E%3C/svg%3E"><div class="gal-cap">Menu development, test kitchen</div></div>
+  </div>
+</section>
+
+<div class="statement">
+  <p class="st-text fade">Some meals feed you. <span class="g">The best ones stay with you.</span></p>
+  <div class="st-by fade">Maison Escapade</div>
+</div>
+
+<section class="wrap" id="words">
+  <span class="kicker fade">Kind words</span>
+  <h2 class="fade">What people <span class="g">say.</span></h2>
+  <div class="testi">
+    <div class="t-card fade">
+      <p class="t-quote">"Jordan transformed our menu and our margins in the same season. The food is extraordinary — the discipline behind it, even more so."</p>
+      <div class="t-by">Restaurant owner, Sydney</div>
+    </div>
+    <div class="t-card fade">
+      <p class="t-quote">"Our wedding dinner is still the meal our guests talk about, two years later. Every course felt personal."</p>
+      <div class="t-by">Private client, Palm Beach</div>
+    </div>
+  </div>
+</section>
+
+<section class="wrap" id="services">
+  <span class="kicker fade">Working together</span>
+  <h2 class="fade">More than <span class="g">dinner.</span></h2>
+  <div class="svc">
+    <div class="svc-card fade" data-tilt=""><div class="svc-num">01</div><h3>Chef's table</h3><p>Six seats at the pass, seven courses, the whole story told plate by plate. Fridays and Saturdays.</p></div>
+    <div class="svc-card fade" data-tilt=""><div class="svc-num">02</div><h3>Private dining</h3><p>Our garden room seats up to eighteen — birthdays, anniversaries and long lunches that run late.</p></div>
+    <div class="svc-card fade" data-tilt=""><div class="svc-num">03</div><h3>Functions &amp; events</h3><p>Whole-venue takeovers and bespoke menus for up to eighty guests. Talk to us early.</p></div>
+  </div>
+</section>
+
+<div id="customSections"></div>
+
+<section class="wrap contact" id="contact">
+  <span class="kicker fade">Visit us</span>
+  <p class="big fade">Book your table. <span class="g">We'll do the rest.</span></p>
+  <div class="visit-grid fade">
+    <div><h4>Hours</h4><p>Tuesday – Sunday<br>Sittings 6:00 PM &amp; 8:00 PM<br>Arrivals 5:30 – 9:30 PM<br>Closed Mondays</p></div>
+    <div><h4>Find us</h4><p>12 Harbour Lane<br>Sydney NSW 2000</p></div>
+    <div><h4>Contact</h4><p><a href="tel:+61 2 9000 0000">+61 2 9000 0000</a><br>bookings@example.com<br>Groups of 13+ — please call</p></div>
+  </div>
+  <div class="contact-row fade">
+    <a class="c-btn c-fill" href="#" data-book="">Book a table</a>
+    <a class="c-btn c-line" href="tel:+61290000000">Call +61 2 9000 0000</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Maison Escapade · 12 Harbour Lane, Sydney</span>
+    <span>Made with WebEscapade</span>
+  </div>
+</footer>
+
+<!-- floating book button + booking modal (stay in published file) -->
+<button id="bookFab" data-book=""><span class="dot"></span> Book a Table</button>
+<div id="bookModal" role="dialog" aria-modal="true" aria-label="Book a table">
+  <div class="bm-card">
+    <div class="bm-head">
+      <span>Reserve your table</span>
+      <button class="bm-close" id="bmClose" aria-label="Close">×</button>
+    </div>
+    <iframe id="bmFrame" title="Booking form" loading="lazy"></iframe>
+  </div>
+</div>
+
+<!-- ---------- portal viewer (stays in published file) ---------- -->
+<div id="portal">
+  <button class="pt-close" id="ptClose" aria-label="Close">×</button>
+  <div class="pt-img-wrap">
+    <button class="pt-btn pt-prev" id="ptPrev" aria-label="Previous">‹</button>
+    <img id="ptImg" alt="Full view" src="">
+    <button class="pt-btn pt-next" id="ptNext" aria-label="Next">›</button>
+  </div>
+  <div class="pt-cap" id="ptCap"></div>
+</div>
+
+<!-- ================= ENGINE UI (removed on publish) ================= -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script id="siteScript">
+/* ---------- runtime features — stay in the published file ---------- */
+(function(){
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* fade on scroll */
+  function watchFades(){
+    if(!('IntersectionObserver' in window)){
+      document.querySelectorAll('.fade').forEach(function(el){ el.classList.add('in'); });
+      return null;
+    }
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+    },{threshold:.12});
+    document.querySelectorAll('.fade').forEach(function(el){ io.observe(el); });
+    return io;
+  }
+  window.__fadeIO = watchFades();
+
+  /* hero video: activate if a source was saved */
+  var hv = document.getElementById('heroVideo');
+  var poster = document.getElementById('heroPoster');
+  if(hv && hv.dataset.src){
+    hv.src = hv.dataset.src;
+    hv.classList.add('live');
+    if(poster) poster.classList.add('hidden');
+  }
+
+  /* 3D tilt on pointer for hero stage + [data-tilt] cards */
+  function addTilt(el, strength){
+    if(reduced) return;
+    el.addEventListener('pointermove', function(e){
+      if(document.body.classList.contains('editing')) return;
+      var r = el.getBoundingClientRect();
+      var x = (e.clientX - r.left)/r.width - .5;
+      var y = (e.clientY - r.top)/r.height - .5;
+      el.style.transform = 'rotateY('+(x*strength)+'deg) rotateX('+(-y*strength*0.8)+'deg)';
+    });
+    el.addEventListener('pointerleave', function(){ el.style.transform = ''; });
+  }
+  document.querySelectorAll('[data-tilt]').forEach(function(el){ addTilt(el, 10); });
+  var stage  = document.getElementById('heroStage');
+  var heroEl = document.querySelector('.hero');
+  var media  = document.querySelector('.hero-media');
+  var heroFX = { tiltX:0, tiltY:0, sy:0, fade:1 };
+  function applyHeroFX(){
+    if(!stage) return;
+    stage.style.transform =
+      'translateY('+heroFX.sy.toFixed(1)+'px) rotateY('+heroFX.tiltY.toFixed(2)+'deg) rotateX('+heroFX.tiltX.toFixed(2)+'deg)';
+    stage.style.opacity = heroFX.fade.toFixed(3);
+  }
+  if(stage && heroEl && !reduced){
+    /* pointer tilt — composes with the scroll parallax */
+    heroEl.addEventListener('pointermove', function(e){
+      if(document.body.classList.contains('editing')) return;
+      var r = heroEl.getBoundingClientRect();
+      var x = (e.clientX - r.left)/r.width - .5;
+      var y = (e.clientY - r.top)/r.height - .5;
+      heroFX.tiltY = x*5; heroFX.tiltX = -y*4;
+      applyHeroFX();
+    });
+    heroEl.addEventListener('pointerleave', function(){ heroFX.tiltY = 0; heroFX.tiltX = 0; applyHeroFX(); });
+
+    /* scroll parallax — the photo drifts slower than the words, and the words
+       lift and fade as you leave the hero. Layered depth without the busywork. */
+    var ticking = false;
+    function onScroll(){
+      if(ticking) return; ticking = true;
+      requestAnimationFrame(function(){
+        ticking = false;
+        if(document.body.classList.contains('editing')){
+          heroFX.sy = 0; heroFX.fade = 1;
+          if(media) media.style.transform = '';
+          applyHeroFX();
+          return;
+        }
+        var h = heroEl.offsetHeight || 1;
+        var y = Math.min(window.pageYOffset || window.scrollY || 0, h);
+        heroFX.sy   = y * 0.10;                                   /* words lift gently   */
+        heroFX.fade = Math.max(0, 1 - (y / h) * 1.2);            /* and fade out         */
+        applyHeroFX();
+        if(media){
+          var my = Math.min(y * 0.32, h * 0.12);                 /* photo held back      */
+          media.style.transform = 'scale(1.25) translateY('+my.toFixed(1)+'px)';
+        }
+      });
+    }
+    window.addEventListener('scroll', onScroll, { passive:true });
+    onScroll();
+  }
+
+  /* gallery mode switcher */
+  var gal = document.getElementById('gal');
+  document.querySelectorAll('.mode-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('.mode-btn').forEach(function(b){ b.classList.remove('on'); });
+      btn.classList.add('on');
+      gal.className = 'gal mode-' + btn.dataset.mode;
+    });
+  });
+
+  /* portal viewer with circular transition from tap point */
+  var items = function(){ return Array.prototype.slice.call(document.querySelectorAll('.gal-item')); };
+  var portal = document.getElementById('portal');
+  var ptImg = document.getElementById('ptImg');
+  var ptCap = document.getElementById('ptCap');
+  var current = 0;
+
+  function showInPortal(src, caption, ev){
+    ptImg.src = src;
+    ptCap.textContent = caption || '';
+    document.getElementById('ptPrev').style.display = 'none';
+    document.getElementById('ptNext').style.display = 'none';
+    if(ev){
+      portal.style.setProperty('--px', (ev.clientX/window.innerWidth*100)+'%');
+      portal.style.setProperty('--py', (ev.clientY/window.innerHeight*100)+'%');
+    }
+    portal.classList.remove('open');
+    void portal.offsetWidth;
+    portal.classList.add('open');
+  }
+  function openPortal(i, ev){
+    document.getElementById('ptPrev').style.display = '';
+    document.getElementById('ptNext').style.display = '';
+    var list = items();
+    current = (i + list.length) % list.length;
+    var it = list[current];
+    ptImg.src = it.querySelector('img').src;
+    var cap = it.querySelector('.gal-cap');
+    ptCap.textContent = cap ? cap.textContent : '';
+    if(ev){
+      portal.style.setProperty('--px', (ev.clientX/window.innerWidth*100)+'%');
+      portal.style.setProperty('--py', (ev.clientY/window.innerHeight*100)+'%');
+    }
+    portal.classList.remove('open');
+    void portal.offsetWidth; /* restart animation */
+    portal.classList.add('open');
+  }
+  document.addEventListener('click', function(e){
+    var it = e.target.closest('.gal-item');
+    if(!it) return;
+    if(document.body.classList.contains('editing')) return;
+    openPortal(items().indexOf(it), e);
+  });
+  document.getElementById('ptClose').addEventListener('click', function(){ portal.classList.remove('open'); });
+  document.getElementById('ptPrev').addEventListener('click', function(e){ e.stopPropagation(); openPortal(current - 1); });
+  document.getElementById('ptNext').addEventListener('click', function(e){ e.stopPropagation(); openPortal(current + 1); });
+  portal.addEventListener('click', function(e){ if(e.target === portal) portal.classList.remove('open'); });
+  document.addEventListener('keydown', function(e){
+    if(!portal.classList.contains('open')) return;
+    if(e.key === 'Escape') portal.classList.remove('open');
+    if(e.key === 'ArrowLeft') openPortal(current - 1);
+    if(e.key === 'ArrowRight') openPortal(current + 1);
+  });
+
+  /* ---------- booking modal ---------- */
+  var bookModal = document.getElementById('bookModal');
+  var bookFrame = document.getElementById('bmFrame');
+  var bookLoaded = false;
+  function bookingUrl(){ return document.body.getAttribute('data-booking-url') || 'restaurant-booking-supabase.html'; }
+  function openBooking(){
+    if(document.body.classList.contains('editing')) return; /* editing: taps edit text instead */
+    if(!bookLoaded){ bookFrame.src = bookingUrl(); bookLoaded = true; }
+    bookModal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeBooking(){
+    bookModal.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.addEventListener('click', function(e){
+    var b = e.target.closest('[data-book]');
+    if(b){ e.preventDefault(); openBooking(); }
+  });
+  document.getElementById('bmClose').addEventListener('click', closeBooking);
+  bookModal.addEventListener('click', function(e){ if(e.target === bookModal) closeBooking(); });
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape' && bookModal.classList.contains('open')) closeBooking();
+  });
+  if(location.hash === '#book') openBooking();
+
+  /* ---------- tappable dishes: menu -> portal ---------- */
+  document.addEventListener('click', function(e){
+    if(document.body.classList.contains('editing')) return;
+    var d = e.target.closest('.dish.has-photo');
+    if(!d || !d.dataset.photo) return;
+    var name = d.querySelector('.dish-name');
+    var price = d.querySelector('.dish-price');
+    showInPortal(d.dataset.photo,
+      (name ? name.textContent.trim() : '') + (price ? ' · ' + price.textContent.trim() : ''), e);
+  });
+
+  /* ---------- live availability (reads the booking database) ----------
+     Configure in edit mode with "Set live seats". LIVE_SLOTS must match
+     the timeSlots in your booking page's CONFIG.                        */
+  var LIVE_SLOTS = [
+    { id: 's1', label: '6:00 PM' },
+    { id: 's2', label: '8:00 PM' }
+  ];
+  var LOW_SEATS = 12; /* at or below this, the chip glows amber */
+
+  function pad2(n){ return (n < 10 ? '0' : '') + n; }
+  function todayISO(){
+    var d = new Date();
+    return d.getFullYear() + '-' + pad2(d.getMonth()+1) + '-' + pad2(d.getDate());
+  }
+  function refreshLiveSeats(){
+    var url = document.body.getAttribute('data-sb-url');
+    var key = document.body.getAttribute('data-sb-key');
+    var strip = document.getElementById('liveStrip');
+    if(!url || !key){ strip.classList.remove('show'); return; }
+    fetch(url.replace(/\/+$/,'') + '/rest/v1/rpc/get_availability', {
+      method: 'POST',
+      headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_date: todayISO() })
+    }).then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(data){
+        if(!data || data.online_seats == null){ strip.classList.remove('show'); return; }
+        var chips = '', minLow = null, allFull = true;
+        LIVE_SLOTS.forEach(function(s){
+          var taken = (data.taken && data.taken[s.id]) || 0;
+          var left = Math.max(0, data.online_seats - taken);
+          var cls, txt;
+          if(left <= 0){ cls = 'full'; txt = 'Fully booked'; }
+          else if(left <= LOW_SEATS){ cls = 'low'; txt = left + (left === 1 ? ' seat' : ' seats') + ' left'; allFull = false; if(minLow === null || left < minLow) minLow = left; }
+          else { cls = 'good'; txt = 'Good availability'; allFull = false; }
+          chips += '<span class="ls-chip ' + cls + '"><i></i><b>' + s.label + '</b> ' + txt + '</span>';
+        });
+        document.getElementById('lsChips').innerHTML = chips;
+        strip.classList.add('show');
+        /* the floating button tells the story too */
+        var fab = document.getElementById('bookFab');
+        if(fab && !document.body.classList.contains('editing')){
+          if(allFull) fab.innerHTML = '<span class="dot"></span> Book another night';
+          else if(minLow !== null) fab.innerHTML = '<span class="dot"></span> Book \u2014 ' + minLow + ' seats left tonight';
+        }
+      }).catch(function(){ strip.classList.remove('show'); });
+  }
+  window.refreshLiveSeats = refreshLiveSeats;
+  refreshLiveSeats();
+  /* seats change while people browse — refresh quietly every 90s,
+     and right after the booking modal closes */
+  setInterval(refreshLiveSeats, 90000);
+  var _origCloseBooking = closeBooking;
+  closeBooking = function(){ _origCloseBooking(); setTimeout(refreshLiveSeats, 1200); };
+})();
+</script>
+
+
+
+
+
+
+</body></html>
